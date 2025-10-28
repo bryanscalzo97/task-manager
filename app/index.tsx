@@ -1,16 +1,26 @@
+import { router } from 'expo-router';
 import { StyleSheet } from 'react-native';
 
+import { FloatingActionButton } from '@/components/FloatingActionButton';
+import { TaskList } from '@/components/TaskList';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { ThemeToggle } from '@/components/ThemeToggle';
 
 export default function HomeScreen() {
+  const handleAddTask = () => {
+    router.push('/add-task');
+  };
+
   return (
     <ThemedView style={styles.container}>
       <ThemedView style={styles.header}>
-        <ThemedText type='title'>Home</ThemedText>
+        <ThemedText type='title'>Task Manager</ThemedText>
         <ThemeToggle />
       </ThemedView>
+
+      <TaskList />
+      <FloatingActionButton onPress={handleAddTask} disabled={false} />
     </ThemedView>
   );
 }
@@ -18,12 +28,13 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: 60,
+    paddingHorizontal: 20,
+    paddingTop: 60,
+    paddingBottom: 20,
   },
 });

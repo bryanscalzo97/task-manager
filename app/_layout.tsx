@@ -26,6 +26,14 @@ function RootLayoutNav() {
     <NavigationThemeProvider value={isDark ? DarkTheme : DefaultTheme}>
       <Stack>
         <Stack.Screen name='index' options={{ headerShown: false }} />
+        <Stack.Screen
+          name='add-task'
+          options={{
+            presentation: 'modal',
+            headerShown: false,
+            animation: 'slide_from_bottom',
+          }}
+        />
       </Stack>
       <StatusBar style='auto' />
     </NavigationThemeProvider>
