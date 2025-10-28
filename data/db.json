@@ -1,0 +1,28 @@
+{
+  "tasks": [
+    {
+      "id": "1",
+      "text": "Learn React Native",
+      "completed": false,
+      "priority": "High",
+      "createdAt": "2024-01-15T10:00:00.000Z",
+      "updatedAt": "2025-10-28T21:07:05.519Z"
+    },
+    {
+      "id": "2",
+      "text": "Build Task Manager App",
+      "completed": false,
+      "priority": "Medium",
+      "createdAt": "2024-01-14T09:00:00.000Z",
+      "updatedAt": "2025-10-28T21:07:06.252Z"
+    },
+    {
+      "id": "3",
+      "text": "Write documentation",
+      "completed": false,
+      "priority": "Low",
+      "createdAt": "2024-01-13T14:00:00.000Z",
+      "updatedAt": "2025-10-28T21:07:09.487Z"
+    }
+  ]
+}
