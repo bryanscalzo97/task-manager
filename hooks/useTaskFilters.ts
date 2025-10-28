@@ -48,10 +48,10 @@ export function useTaskFilters() {
   }, []);
 
   // Memoized computed values
-  const filteredTasks = useMemo(
-    () => getFilteredTasks(tasks),
-    [tasks, getFilteredTasks]
-  );
+  const filteredTasks = useMemo(() => {
+    const filtered = getFilteredTasks(tasks);
+    return filtered;
+  }, [tasks, getFilteredTasks]);
   const taskStats = useMemo(() => getTaskStats(tasks), [tasks, getTaskStats]);
 
   return {

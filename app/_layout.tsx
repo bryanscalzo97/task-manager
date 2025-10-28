@@ -34,6 +34,14 @@ function RootLayoutNav() {
             animation: 'slide_from_bottom',
           }}
         />
+        <Stack.Screen
+          name='filters'
+          options={{
+            presentation: 'modal',
+            headerShown: false,
+            animation: 'slide_from_bottom',
+          }}
+        />
       </Stack>
       <StatusBar style='auto' />
     </NavigationThemeProvider>

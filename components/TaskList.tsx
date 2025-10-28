@@ -9,7 +9,7 @@ import { ThemedView } from './themed-view';
 
 export function TaskList() {
   const { isLoading, error, refetch } = useTasks();
-  const { tasks } = useTaskFilters();
+  const { tasks, filters } = useTaskFilters();
 
   const renderTask = ({ item }: { item: Task }) => <TaskItem task={item} />;
 
@@ -41,7 +41,9 @@ export function TaskList() {
     <FlatList
       data={tasks}
       renderItem={renderTask}
-      keyExtractor={(item) => item.id}
+      keyExtractor={(item) =>
+        `${item.id}-${filters.status}-${filters.priority}`
+      }
       contentContainerStyle={styles.container}
       showsVerticalScrollIndicator={false}
       refreshControl={
