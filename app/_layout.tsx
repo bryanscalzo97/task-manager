@@ -3,11 +3,21 @@ import {
   DefaultTheme,
   ThemeProvider as NavigationThemeProvider,
 } from '@react-navigation/native';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 
 import { ThemeProvider, useTheme } from '@/contexts/ThemeContext';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      retry: 3,
+    },
+  },
+});
 
 function RootLayoutNav() {
   const { isDark } = useTheme();
@@ -24,8 +34,10 @@ function RootLayoutNav() {
 
 export default function RootLayout() {
   return (
-    <ThemeProvider>
-      <RootLayoutNav />
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider>
+        <RootLayoutNav />
+      </ThemeProvider>
+    </QueryClientProvider>
   );
 }
