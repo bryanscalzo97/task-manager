@@ -8,15 +8,18 @@ type TaskFilters = {
   status?: TaskStatus; // 'All' | 'Completed' | 'Pending'
   priority?: TaskPriority | 'All';
   search?: string;
+  sortOrder?: 'asc' | 'desc';
 };
 
 export function useTasks(filters?: TaskFilters) {
   // Create a stable query key based on filter values
+  const sortOrder = filters?.sortOrder || 'desc';
   const queryKey = [
     'tasks',
     filters?.status || 'All',
     filters?.priority || 'All',
     filters?.search || '',
+    sortOrder,
   ];
 
   return useQuery({
@@ -37,10 +40,6 @@ export function useTasks(filters?: TaskFilters) {
         params.append('q', filters.search.trim());
       }
 
-      // Default sort - newest first
-      params.append('_sort', 'createdAt');
-      params.append('_order', 'desc');
-
       const url = `${API_BASE}/tasks${
         params.toString() ? `?${params.toString()}` : ''
       }`;
@@ -50,11 +49,20 @@ export function useTasks(filters?: TaskFilters) {
         throw new Error('Failed to fetch tasks');
       }
       const tasks = await response.json();
-      return tasks.map((task: any) => ({
+
+      const tasksWithDates = tasks.map((task: any) => ({
         ...task,
         createdAt: new Date(task.createdAt),
         updatedAt: new Date(task.updatedAt),
       }));
+
+      const sortedTasks = tasksWithDates.sort((a: Task, b: Task) => {
+        const dateA = a.createdAt.getTime();
+        const dateB = b.createdAt.getTime();
+        return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
+      });
+
+      return sortedTasks;
     },
   });
 }

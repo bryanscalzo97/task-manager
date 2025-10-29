@@ -11,7 +11,10 @@ export type Task = {
   updatedAt: Date;
 };
 
+export type SortOrder = 'asc' | 'desc';
+
 export type FilterState = {
   status: TaskStatus;
   priority: TaskPriority | 'All';
+  sortOrder: SortOrder;
 };

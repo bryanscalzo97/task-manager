@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { FloatingActionButton } from '@/components/FloatingActionButton';
 import { TaskList } from '@/components/TaskList';
@@ -7,11 +7,13 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useThemeColor } from '@/hooks/use-theme-color';
+import { useTaskFilters } from '@/hooks/useTaskFilters';
 import { Ionicons } from '@expo/vector-icons';
-import { TouchableOpacity } from 'react-native';
 
 export default function HomeScreen() {
   const iconColor = useThemeColor({}, 'icon');
+  const tintColor = useThemeColor({}, 'tint');
+  const { taskStats } = useTaskFilters();
 
   const handleAddTask = () => {
     router.push('/add-task');
@@ -24,7 +26,16 @@ export default function HomeScreen() {
   return (
     <ThemedView style={styles.container}>
       <ThemedView style={styles.header}>
-        <ThemedText type='title'>Task Manager</ThemedText>
+        <ThemedView style={styles.titleSection}>
+          <ThemedText type='title'>Task Manager</ThemedText>
+          {taskStats.pending > 0 && (
+            <View style={[styles.badge, { backgroundColor: tintColor }]}>
+              <ThemedText style={styles.badgeText}>
+                {taskStats.pending} {taskStats.pending === 1 ? 'task' : 'tasks'}
+              </ThemedText>
+            </View>
+          )}
+        </ThemedView>
         <ThemedView style={styles.headerActions}>
           <TouchableOpacity
             onPress={handleOpenFilters}
@@ -53,6 +64,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 60,
     paddingBottom: 20,
+  },
+  titleSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    flex: 1,
+  },
+  badge: {
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 12,
+    backgroundColor: '#007AFF',
+  },
+  badgeText: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: '600',
   },
   headerActions: {
     flexDirection: 'row',

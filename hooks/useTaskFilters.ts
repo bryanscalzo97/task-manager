@@ -4,8 +4,13 @@ import { useTasks } from './useTasks';
 
 export function useTaskFilters() {
   // Get filters from shared context
-  const { filters, setStatusFilter, setPriorityFilter, resetFilters } =
-    useFilterContext();
+  const {
+    filters,
+    setStatusFilter,
+    setPriorityFilter,
+    setSortOrder,
+    resetFilters,
+  } = useFilterContext();
 
   // Fetch filtered tasks from the API using server-side filters
   const {
@@ -13,7 +18,11 @@ export function useTaskFilters() {
     isLoading,
     error,
     refetch,
-  } = useTasks({ status: filters.status, priority: filters.priority });
+  } = useTasks({
+    status: filters.status,
+    priority: filters.priority,
+    sortOrder: filters.sortOrder,
+  });
 
   // Fetch all tasks (unfiltered) for statistics
   const { data: allTasks = [] } = useTasks();
@@ -29,13 +38,13 @@ export function useTaskFilters() {
   return {
     // State
     tasks,
-    allTasks,
     filters,
     taskStats,
 
     // Actions
     setStatusFilter,
     setPriorityFilter,
+    setSortOrder,
     resetFilters,
 
     // Query state

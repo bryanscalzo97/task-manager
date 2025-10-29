@@ -2,11 +2,11 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { useTaskFilters } from '@/hooks/useTaskFilters';
-import { TaskPriority, TaskStatus } from '@/types/task';
+import { SortOrder, TaskPriority, TaskStatus } from '@/types/task';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React from 'react';
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import { ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const STATUS_OPTIONS: { label: string; value: TaskStatus }[] = [
@@ -22,17 +22,22 @@ const PRIORITY_OPTIONS: { label: string; value: TaskPriority | 'All' }[] = [
   { label: 'Low Priority', value: 'Low' },
 ];
 
+const SORT_OPTIONS: { label: string; value: SortOrder; icon: string }[] = [
+  { label: 'Newest First', value: 'desc', icon: 'arrow-down-outline' },
+  { label: 'Oldest First', value: 'asc', icon: 'arrow-up-outline' },
+];
+
 export default function FiltersScreen() {
   const textColor = useThemeColor({}, 'text');
   const iconColor = useThemeColor({}, 'icon');
   const tintColor = useThemeColor({}, 'tint');
   const backgroundColor = useThemeColor({}, 'background');
-  const surfaceColor = useThemeColor({}, 'surface');
 
   const {
     filters,
     setStatusFilter,
     setPriorityFilter,
+    setSortOrder,
     resetFilters,
     taskStats,
   } = useTaskFilters();
@@ -62,7 +67,11 @@ export default function FiltersScreen() {
         </TouchableOpacity>
       </ThemedView>
 
-      <ThemedView style={styles.content}>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
         {/* Task Statistics */}
         <ThemedView style={styles.statsSection}>
           <ThemedText style={[styles.sectionTitle, { color: textColor }]}>
@@ -107,7 +116,6 @@ export default function FiltersScreen() {
                 key={option.value}
                 style={[
                   styles.optionButton,
-                  { backgroundColor: surfaceColor },
                   filters.status === option.value && styles.selectedOption,
                 ]}
                 onPress={() => setStatusFilter(option.value)}
@@ -140,7 +148,6 @@ export default function FiltersScreen() {
                 key={option.value}
                 style={[
                   styles.optionButton,
-                  { backgroundColor: surfaceColor },
                   filters.priority === option.value && styles.selectedOption,
                 ]}
                 onPress={() => setPriorityFilter(option.value)}
@@ -161,7 +168,48 @@ export default function FiltersScreen() {
             ))}
           </ThemedView>
         </ThemedView>
-      </ThemedView>
+
+        {/* Sort Order */}
+        <ThemedView style={styles.filterSection}>
+          <ThemedText style={[styles.sectionTitle, { color: textColor }]}>
+            Sort By Date
+          </ThemedText>
+          <ThemedView style={styles.optionsContainer}>
+            {SORT_OPTIONS.map((option) => (
+              <TouchableOpacity
+                key={option.value}
+                style={[
+                  styles.optionButton,
+                  filters.sortOrder === option.value && styles.selectedOption,
+                ]}
+                onPress={() => setSortOrder(option.value)}
+              >
+                <ThemedView style={styles.sortOptionContent}>
+                  <Ionicons
+                    name={option.icon as any}
+                    size={18}
+                    color={
+                      filters.sortOrder === option.value ? tintColor : iconColor
+                    }
+                  />
+                  <ThemedText
+                    style={[
+                      styles.optionText,
+                      { color: textColor },
+                      filters.sortOrder === option.value && styles.selectedText,
+                    ]}
+                  >
+                    {option.label}
+                  </ThemedText>
+                </ThemedView>
+                {filters.sortOrder === option.value && (
+                  <Ionicons name='checkmark' size={20} color={tintColor} />
+                )}
+              </TouchableOpacity>
+            ))}
+          </ThemedView>
+        </ThemedView>
+      </ScrollView>
 
       <ThemedView style={styles.footer}>
         <TouchableOpacity
@@ -216,9 +264,12 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: 'white',
   },
-  content: {
+  scrollView: {
     flex: 1,
+  },
+  content: {
     padding: 20,
+    paddingBottom: 20,
   },
   statsSection: {
     marginBottom: 32,
@@ -274,6 +325,12 @@ const styles = StyleSheet.create({
   selectedText: {
     color: '#1976D2',
     fontWeight: '600',
+  },
+  sortOptionContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    flex: 1,
   },
   footer: {
     paddingHorizontal: 20,
