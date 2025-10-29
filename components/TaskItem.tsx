@@ -4,6 +4,7 @@ import { useThemeColor } from '@/hooks/use-theme-color';
 import { useDeleteTask, useToggleTask } from '@/hooks/useTasks';
 import { Task, TaskPriority } from '@/types/task';
 import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import React from 'react';
 import { Alert, StyleSheet, TouchableOpacity } from 'react-native';
 
@@ -58,6 +59,10 @@ export function TaskItem({ task }: TaskItemProps) {
     ]);
   };
 
+  const handleEdit = () => {
+    router.push(`/edit-task?id=${task.id}`);
+  };
+
   const priorityColor = getPriorityColor(task.priority);
   const priorityText = getPriorityText(task.priority);
 
@@ -89,8 +94,12 @@ export function TaskItem({ task }: TaskItemProps) {
             <ThemedText style={styles.priorityText}>{priorityText}</ThemedText>
           </ThemedView>
 
+          <TouchableOpacity style={styles.actionButton} onPress={handleEdit}>
+            <Ionicons name='pencil-outline' size={20} color={iconColor} />
+          </TouchableOpacity>
+
           <TouchableOpacity
-            style={styles.deleteButton}
+            style={styles.actionButton}
             onPress={handleDelete}
             disabled={deleteTask.isPending}
           >
@@ -165,8 +174,9 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: 'bold',
   },
-  deleteButton: {
+  actionButton: {
     padding: 8,
     borderRadius: 8,
+    marginLeft: 4,
   },
 });

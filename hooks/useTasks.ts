@@ -95,7 +95,7 @@ export function useAddTask() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['tasks'], exact: false });
     },
   });
 }
@@ -182,7 +182,7 @@ export function useEditTask() {
       }
       const currentTask = await getResponse.json();
 
-      const updatedTask = {
+      const taskPayload = {
         ...currentTask,
         text: text.trim(),
         priority,
@@ -194,14 +194,15 @@ export function useEditTask() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(updatedTask),
+        body: JSON.stringify(taskPayload),
       });
 
       if (!response.ok) {
         throw new Error('Failed to update task');
       }
 
-      return response.json();
+      const updatedTask = await response.json();
+      return updatedTask;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
