@@ -2,6 +2,7 @@ import React from 'react';
 import { FlatList, RefreshControl } from 'react-native';
 import { useTaskFilters } from '../../hooks/useTaskFilters';
 import { Task } from '../../models/task';
+import { useThemeColor } from '../../utils/use-theme-color';
 import { TaskItem } from '../TaskItem';
 import { ThemedText } from '../ThemedText';
 import { ThemedView } from '../ThemedView';
@@ -9,6 +10,7 @@ import { styles } from './TaskList.styles';
 
 export function TaskList() {
   const { tasks, filters, isLoading, error, refetch } = useTaskFilters();
+  const tintColor = useThemeColor({}, 'tint');
 
   const renderTask = ({ item }: { item: Task }) => <TaskItem task={item} />;
 
@@ -42,7 +44,12 @@ export function TaskList() {
       contentContainerStyle={styles.container}
       showsVerticalScrollIndicator={false}
       refreshControl={
-        <RefreshControl refreshing={isLoading} onRefresh={() => refetch()} />
+        <RefreshControl
+          refreshing={isLoading}
+          onRefresh={() => refetch()}
+          tintColor={tintColor}
+          colors={[tintColor]}
+        />
       }
       ListEmptyComponent={error ? renderError : renderEmpty}
     />
