@@ -34,6 +34,7 @@ function getPriorityText(priority: TaskPriority): string {
 export function TaskItem({ task }: TaskItemProps) {
   const textColor = useThemeColor({}, 'text');
   const iconColor = useThemeColor({}, 'icon');
+  const backgroundColor = useThemeColor({}, 'background');
   const toggleTask = useToggleTask();
   const deleteTask = useDeleteTask();
 
@@ -60,46 +61,87 @@ export function TaskItem({ task }: TaskItemProps) {
   const priorityText = getPriorityText(task.priority);
 
   return (
-    <ThemedView style={styles.container}>
-      <TouchableOpacity style={styles.content} onPress={handleToggle}>
+    <ThemedView
+      style={[
+        styles.container,
+        { backgroundColor },
+        task.completed && styles.completedContainer,
+      ]}
+    >
+      <TouchableOpacity
+        style={styles.content}
+        onPress={handleToggle}
+        activeOpacity={0.7}
+      >
         <ThemedView style={styles.leftSection}>
-          <ThemedView style={styles.checkbox}>
+          <ThemedView
+            style={[
+              styles.checkbox,
+              task.completed && styles.checkboxCompleted,
+              { borderColor: iconColor },
+            ]}
+          >
             {task.completed && (
-              <Ionicons name='checkmark' size={16} color={textColor} />
+              <Ionicons name='checkmark' size={18} color={priorityColor} />
             )}
           </ThemedView>
           <ThemedView style={styles.textSection}>
             <ThemedText
-              style={[styles.taskText, task.completed && styles.completedText]}
+              style={[
+                styles.taskText,
+                task.completed && styles.completedText,
+                { color: textColor },
+              ]}
             >
               {task.text}
             </ThemedText>
-            <ThemedText style={styles.dateText}>
-              {new Date(task.createdAt).toLocaleDateString()}
-            </ThemedText>
+            <ThemedView style={styles.metadataRow}>
+              <ThemedView style={styles.priorityIndicator}>
+                <ThemedView
+                  style={[
+                    styles.priorityDot,
+                    { backgroundColor: priorityColor },
+                  ]}
+                />
+                <ThemedText
+                  style={[styles.priorityLabel, { color: iconColor }]}
+                >
+                  {priorityText}
+                </ThemedText>
+              </ThemedView>
+              <ThemedText style={[styles.dateText, { color: iconColor }]}>
+                {new Date(task.createdAt).toLocaleDateString('en-US', {
+                  month: 'short',
+                  day: 'numeric',
+                })}
+              </ThemedText>
+            </ThemedView>
           </ThemedView>
         </ThemedView>
 
         <ThemedView style={styles.rightSection}>
-          <ThemedView
-            style={[styles.priorityBadge, { backgroundColor: priorityColor }]}
+          <TouchableOpacity
+            style={[styles.actionButton, { backgroundColor }]}
+            onPress={handleEdit}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
-            <ThemedText style={styles.priorityText}>{priorityText}</ThemedText>
-          </ThemedView>
-
-          <TouchableOpacity style={styles.actionButton} onPress={handleEdit}>
-            <Ionicons name='pencil-outline' size={20} color={iconColor} />
+            <Ionicons name='pencil-outline' size={18} color={iconColor} />
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={styles.actionButton}
+            style={[
+              styles.actionButton,
+              { backgroundColor },
+              deleteTask.isPending && styles.actionButtonDisabled,
+            ]}
             onPress={handleDelete}
             disabled={deleteTask.isPending}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
             <Ionicons
               name='trash-outline'
-              size={20}
-              color={deleteTask.isPending ? '#888' : iconColor}
+              size={18}
+              color={deleteTask.isPending ? iconColor + '80' : iconColor}
             />
           </TouchableOpacity>
         </ThemedView>

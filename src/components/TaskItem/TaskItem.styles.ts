@@ -4,30 +4,46 @@ import { BORDER_RADIUS, SPACING } from '../../utils/theme';
 export const styles = StyleSheet.create({
   container: {
     marginHorizontal: SPACING.lg,
-    marginVertical: SPACING.xs,
-    borderRadius: BORDER_RADIUS.md,
-    backgroundColor: 'rgba(0,0,0,0.05)',
+    marginVertical: SPACING.sm,
+    borderRadius: BORDER_RADIUS.lg,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  completedContainer: {
+    opacity: 0.85,
   },
   content: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: SPACING.lg,
+    minHeight: 72,
   },
   leftSection: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     flex: 1,
+    paddingRight: SPACING.md,
   },
   checkbox: {
-    width: 24,
-    height: 24,
-    borderRadius: BORDER_RADIUS.full,
+    width: 28,
+    height: 28,
+    borderRadius: BORDER_RADIUS.sm,
     borderWidth: 2,
-    borderColor: '#ddd',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: SPACING.md,
+    marginTop: 2,
+  },
+  checkboxCompleted: {
+    borderWidth: 2,
   },
   textSection: {
     flex: 1,
@@ -35,34 +51,52 @@ export const styles = StyleSheet.create({
   taskText: {
     fontSize: 16,
     fontWeight: '500',
+    lineHeight: 22,
     marginBottom: SPACING.xs,
   },
   completedText: {
     textDecorationLine: 'line-through',
     opacity: 0.6,
   },
+  metadataRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.md,
+    marginTop: SPACING.xs,
+  },
+  priorityIndicator: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.xs,
+  },
+  priorityDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  priorityLabel: {
+    fontSize: 11,
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
   dateText: {
-    fontSize: 12,
-    opacity: 0.7,
+    fontSize: 11,
+    fontWeight: '400',
   },
   rightSection: {
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  priorityBadge: {
-    paddingHorizontal: SPACING.sm,
-    paddingVertical: SPACING.xs,
-    borderRadius: BORDER_RADIUS.md,
-    marginRight: SPACING.sm,
-  },
-  priorityText: {
-    color: 'white',
-    fontSize: 12,
-    fontWeight: 'bold',
+    gap: SPACING.xs,
   },
   actionButton: {
-    padding: SPACING.sm,
+    width: 36,
+    height: 36,
     borderRadius: BORDER_RADIUS.sm,
-    marginLeft: SPACING.xs,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  actionButtonDisabled: {
+    opacity: 0.5,
   },
 });
