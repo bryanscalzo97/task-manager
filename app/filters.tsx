@@ -1,13 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React from 'react';
-import { ScrollView, TouchableOpacity } from 'react-native';
+import { ScrollView, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ThemedText } from 'src/components/ThemedText';
-import { ThemedView } from 'src/components/ThemedView';
 import { useTaskFilters } from 'src/hooks/useTaskFilters';
 import { SortOrder, TaskPriority, TaskStatus } from 'src/models/task';
-import { STATS_COLORS } from 'src/utils/theme';
+import { TASK_PRIORITY_COLORS } from 'src/utils/theme';
 import { useThemeColor } from 'src/utils/use-theme-color';
 import { styles } from './filters.styles';
 
@@ -42,6 +41,9 @@ export default function FiltersScreen() {
   const tintColor = useThemeColor({}, 'tint');
   const backgroundColor = useThemeColor({}, 'background');
 
+  // Use a fixed primary color for the button that works in both modes
+  const buttonColor = '#0a7ea4';
+
   const {
     filters,
     setStatusFilter,
@@ -59,174 +61,207 @@ export default function FiltersScreen() {
     resetFilters();
   };
 
+  const hasActiveFilters =
+    filters.status !== TaskStatus.All || filters.priority !== TaskStatus.All;
+
+  const getPriorityColor = (value: TaskPriority | TaskStatus.All): string => {
+    if (value === TaskStatus.All) return tintColor;
+    return TASK_PRIORITY_COLORS[value] || tintColor;
+  };
+
   return (
     <SafeAreaView style={[styles.container, { backgroundColor }]}>
-      <ThemedView style={styles.headerActions}>
-        <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
-          <Ionicons name='close' size={24} color={iconColor} />
-        </TouchableOpacity>
+      <View style={[styles.header, { backgroundColor }]}>
         <TouchableOpacity
-          style={[styles.applyButton, { backgroundColor: tintColor }]}
           onPress={handleClose}
+          style={styles.headerButton}
+          hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
         >
-          <ThemedText style={styles.applyButtonText}>Apply</ThemedText>
+          <Ionicons name='close' size={22} color={textColor} />
         </TouchableOpacity>
-      </ThemedView>
+        <ThemedText style={[styles.headerTitle, { color: textColor }]}>
+          Filters
+        </ThemedText>
+        <View style={styles.headerButton} />
+      </View>
 
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        <ThemedView style={styles.statsSection}>
-          <ThemedText style={[styles.sectionTitle, { color: textColor }]}>
-            Task Overview
-          </ThemedText>
-          <ThemedView style={styles.statsContainer}>
-            <ThemedView style={styles.statItem}>
-              <ThemedText style={[styles.statNumber, { color: tintColor }]}>
-                {taskStats.total}
-              </ThemedText>
-              <ThemedText style={[styles.statLabel, { color: iconColor }]}>
-                Total
-              </ThemedText>
-            </ThemedView>
-            <ThemedView style={styles.statItem}>
-              <ThemedText
-                style={[styles.statNumber, { color: STATS_COLORS.completed }]}
-              >
-                {taskStats.completed}
-              </ThemedText>
-              <ThemedText style={[styles.statLabel, { color: iconColor }]}>
-                Completed
-              </ThemedText>
-            </ThemedView>
-            <ThemedView style={styles.statItem}>
-              <ThemedText
-                style={[styles.statNumber, { color: STATS_COLORS.pending }]}
-              >
-                {taskStats.pending}
-              </ThemedText>
-              <ThemedText style={[styles.statLabel, { color: iconColor }]}>
-                Pending
-              </ThemedText>
-            </ThemedView>
-          </ThemedView>
-        </ThemedView>
-
-        <ThemedView style={styles.filterSection}>
+        <View style={styles.section}>
           <ThemedText style={[styles.sectionTitle, { color: textColor }]}>
             Status
           </ThemedText>
-          <ThemedView style={styles.optionsContainer}>
-            {STATUS_OPTIONS.map((option) => (
-              <TouchableOpacity
-                key={option.value}
-                style={[
-                  styles.optionButton,
-                  filters.status === option.value && styles.selectedOption,
-                ]}
-                onPress={() => setStatusFilter(option.value)}
-              >
-                <ThemedText
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.chipsContainer}
+            style={styles.horizontalScroll}
+          >
+            {STATUS_OPTIONS.map((option) => {
+              const isSelected = filters.status === option.value;
+              return (
+                <TouchableOpacity
+                  key={option.value}
                   style={[
-                    styles.optionText,
-                    { color: textColor },
-                    filters.status === option.value && styles.selectedText,
+                    styles.chip,
+                    { backgroundColor },
+                    isSelected && [
+                      styles.chipSelected,
+                      {
+                        backgroundColor: tintColor + '15',
+                        borderColor: tintColor,
+                      },
+                    ],
                   ]}
+                  onPress={() => setStatusFilter(option.value)}
+                  activeOpacity={0.7}
                 >
-                  {option.label}
-                </ThemedText>
-                {filters.status === option.value && (
-                  <Ionicons name='checkmark' size={20} color={tintColor} />
-                )}
-              </TouchableOpacity>
-            ))}
-          </ThemedView>
-        </ThemedView>
-
-        <ThemedView style={styles.filterSection}>
-          <ThemedText style={[styles.sectionTitle, { color: textColor }]}>
-            Priority
-          </ThemedText>
-          <ThemedView style={styles.optionsContainer}>
-            {PRIORITY_OPTIONS.map((option) => (
-              <TouchableOpacity
-                key={option.value}
-                style={[
-                  styles.optionButton,
-                  filters.priority === option.value && styles.selectedOption,
-                ]}
-                onPress={() => setPriorityFilter(option.value)}
-              >
-                <ThemedText
-                  style={[
-                    styles.optionText,
-                    { color: textColor },
-                    filters.priority === option.value && styles.selectedText,
-                  ]}
-                >
-                  {option.label}
-                </ThemedText>
-                {filters.priority === option.value && (
-                  <Ionicons name='checkmark' size={20} color={tintColor} />
-                )}
-              </TouchableOpacity>
-            ))}
-          </ThemedView>
-        </ThemedView>
-
-        <ThemedView style={styles.filterSection}>
-          <ThemedText style={[styles.sectionTitle, { color: textColor }]}>
-            Sort By Date
-          </ThemedText>
-          <ThemedView style={styles.optionsContainer}>
-            {SORT_OPTIONS.map((option) => (
-              <TouchableOpacity
-                key={option.value}
-                style={[
-                  styles.optionButton,
-                  filters.sortOrder === option.value && styles.selectedOption,
-                ]}
-                onPress={() => setSortOrder(option.value)}
-              >
-                <ThemedView style={styles.sortOptionContent}>
-                  <Ionicons
-                    name={option.icon as any}
-                    size={18}
-                    color={
-                      filters.sortOrder === option.value ? tintColor : iconColor
-                    }
-                  />
                   <ThemedText
                     style={[
-                      styles.optionText,
-                      { color: textColor },
-                      filters.sortOrder === option.value && styles.selectedText,
+                      styles.chipText,
+                      { color: isSelected ? tintColor : textColor },
+                      isSelected && styles.chipTextSelected,
                     ]}
                   >
                     {option.label}
                   </ThemedText>
-                </ThemedView>
-                {filters.sortOrder === option.value && (
-                  <Ionicons name='checkmark' size={20} color={tintColor} />
-                )}
-              </TouchableOpacity>
-            ))}
-          </ThemedView>
-        </ThemedView>
+                  {isSelected && (
+                    <Ionicons
+                      name='checkmark'
+                      size={16}
+                      color={tintColor}
+                      style={styles.chipIcon}
+                    />
+                  )}
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+        </View>
+
+        <View style={styles.section}>
+          <ThemedText style={[styles.sectionTitle, { color: textColor }]}>
+            Priority
+          </ThemedText>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.chipsContainer}
+            style={styles.horizontalScroll}
+          >
+            {PRIORITY_OPTIONS.map((option) => {
+              const isSelected = filters.priority === option.value;
+              const priorityColor = getPriorityColor(option.value);
+              return (
+                <TouchableOpacity
+                  key={option.value}
+                  style={[
+                    styles.chip,
+                    { backgroundColor },
+                    isSelected && [
+                      styles.chipSelected,
+                      {
+                        backgroundColor: priorityColor + '15',
+                        borderColor: priorityColor,
+                      },
+                    ],
+                  ]}
+                  onPress={() => setPriorityFilter(option.value)}
+                  activeOpacity={0.7}
+                >
+                  <View
+                    style={[
+                      styles.priorityDot,
+                      { backgroundColor: priorityColor },
+                    ]}
+                  />
+                  <ThemedText
+                    style={[
+                      styles.chipText,
+                      { color: isSelected ? priorityColor : textColor },
+                      isSelected && styles.chipTextSelected,
+                    ]}
+                  >
+                    {option.label.replace(' Priority', '')}
+                  </ThemedText>
+                  {isSelected && (
+                    <Ionicons
+                      name='checkmark'
+                      size={16}
+                      color={priorityColor}
+                      style={styles.chipIcon}
+                    />
+                  )}
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+        </View>
+
+        <View style={styles.section}>
+          <ThemedText style={[styles.sectionTitle, { color: textColor }]}>
+            Sort by
+          </ThemedText>
+          <View style={styles.sortContainer}>
+            {SORT_OPTIONS.map((option) => {
+              const isSelected = filters.sortOrder === option.value;
+              return (
+                <TouchableOpacity
+                  key={option.value}
+                  style={[
+                    styles.sortOption,
+                    { backgroundColor },
+                    isSelected && [
+                      styles.sortOptionSelected,
+                      { borderColor: tintColor },
+                    ],
+                  ]}
+                  onPress={() => setSortOrder(option.value)}
+                  activeOpacity={0.7}
+                >
+                  <Ionicons
+                    name={option.icon as any}
+                    size={20}
+                    color={isSelected ? tintColor : iconColor}
+                  />
+                  <ThemedText
+                    style={[
+                      styles.sortOptionText,
+                      { color: isSelected ? tintColor : textColor },
+                    ]}
+                  >
+                    {option.label}
+                  </ThemedText>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </View>
       </ScrollView>
 
-      <ThemedView style={styles.footer}>
+      <View style={[styles.footer, { backgroundColor }]}>
+        {hasActiveFilters && (
+          <TouchableOpacity
+            style={[styles.clearButton, { borderColor: iconColor }]}
+            onPress={handleReset}
+            activeOpacity={0.7}
+          >
+            <ThemedText style={[styles.clearButtonText, { color: textColor }]}>
+              Clear all
+            </ThemedText>
+          </TouchableOpacity>
+        )}
         <TouchableOpacity
-          style={[styles.resetButton, { borderColor: iconColor }]}
-          onPress={handleReset}
+          style={[styles.applyButton, { backgroundColor: buttonColor }]}
+          onPress={handleClose}
+          activeOpacity={0.8}
         >
-          <ThemedText style={[styles.resetButtonText, { color: textColor }]}>
-            Reset Filters
-          </ThemedText>
+          <ThemedText style={styles.applyButtonText}>Show tasks</ThemedText>
         </TouchableOpacity>
-      </ThemedView>
+      </View>
     </SafeAreaView>
   );
 }

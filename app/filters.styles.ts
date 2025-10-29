@@ -4,118 +4,154 @@ import { BORDER_RADIUS, SPACING } from 'src/utils/theme';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
   },
-  headerActions: {
+  header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: SPACING.xl,
     paddingVertical: SPACING.lg,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(0,0,0,0.08)',
   },
-  closeButton: {
-    width: 32,
-    height: 32,
-    borderRadius: BORDER_RADIUS.full,
+  headerButton: {
+    width: 40,
+    height: 40,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  applyButton: {
-    paddingHorizontal: SPACING.lg,
-    paddingVertical: SPACING.sm,
-    borderRadius: BORDER_RADIUS.sm,
-    backgroundColor: '#007AFF',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  applyButtonText: {
-    fontSize: 16,
+  headerTitle: {
+    fontSize: 22,
     fontWeight: '600',
-    color: 'white',
+    letterSpacing: -0.5,
   },
   scrollView: {
     flex: 1,
   },
   content: {
-    padding: SPACING.xl,
-    paddingBottom: SPACING.xl,
+    paddingTop: SPACING.xl,
+    paddingBottom: SPACING.xxxl,
   },
-  statsSection: {
-    marginBottom: SPACING.xxxl,
-  },
-  filterSection: {
-    marginBottom: SPACING.xxl,
+  section: {
+    paddingHorizontal: SPACING.xl,
+    paddingTop: SPACING.xl,
+    paddingBottom: SPACING.lg,
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: 13,
     fontWeight: '600',
-    marginBottom: SPACING.lg,
-    color: '#222222',
+    marginBottom: SPACING.md,
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
   },
-  statsContainer: {
+  horizontalScroll: {
+    marginHorizontal: -SPACING.xl,
+    paddingLeft: SPACING.xl,
+  },
+  chipsContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-  },
-  statItem: {
-    alignItems: 'center',
-  },
-  statNumber: {
-    fontSize: 24,
-    fontWeight: '700',
-    marginBottom: SPACING.xs,
-  },
-  statLabel: {
-    fontSize: 12,
-    fontWeight: '500',
-    color: '#8E8E93',
-  },
-  optionsContainer: {
     gap: SPACING.sm,
+    paddingRight: SPACING.xxxl,
+    alignItems: 'center',
   },
-  optionButton: {
+  chip: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     paddingHorizontal: SPACING.lg,
-    paddingVertical: 14,
-    borderRadius: BORDER_RADIUS.md,
-    backgroundColor: '#F2F2F7',
+    paddingVertical: SPACING.md + 2,
+    borderRadius: BORDER_RADIUS.full,
+    borderWidth: 1.5,
+    borderColor: 'rgba(0,0,0,0.1)',
+    minHeight: 44,
   },
-  selectedOption: {
-    backgroundColor: '#E3F2FD',
-    borderWidth: 1,
-    borderColor: '#2196F3',
+  chipSelected: {
+    borderWidth: 1.5,
   },
-  optionText: {
-    fontSize: 16,
+  chipText: {
+    fontSize: 15,
     fontWeight: '500',
-    color: '#222222',
+    lineHeight: 20,
   },
-  selectedText: {
-    color: '#1976D2',
+  chipTextSelected: {
     fontWeight: '600',
   },
-  sortOptionContent: {
+  chipIcon: {
+    marginLeft: SPACING.xs,
+  },
+  priorityDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginRight: SPACING.xs,
+  },
+  sortContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: SPACING.sm,
+    gap: SPACING.md,
+  },
+  sortOption: {
     flex: 1,
-  },
-  footer: {
-    paddingHorizontal: SPACING.xl,
-    paddingVertical: SPACING.xl,
-  },
-  resetButton: {
-    paddingVertical: 14,
-    borderRadius: BORDER_RADIUS.md,
-    borderWidth: 2,
-    borderColor: '#DDDDDD',
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    paddingVertical: SPACING.lg + 2,
+    borderRadius: BORDER_RADIUS.md,
+    borderWidth: 1.5,
+    borderColor: 'rgba(0,0,0,0.1)',
+    gap: SPACING.sm,
+    minHeight: 52,
   },
-  resetButtonText: {
-    fontSize: 16,
+  sortOptionSelected: {
+    borderWidth: 1.5,
+  },
+  sortOptionText: {
+    fontSize: 15,
+    fontWeight: '500',
+    lineHeight: 20,
+  },
+  footer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: SPACING.xl,
+    paddingTop: SPACING.md,
+    paddingBottom: SPACING.xl,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(0,0,0,0.08)',
+    gap: SPACING.md,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: -2,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  clearButton: {
+    flex: 1,
+    paddingVertical: SPACING.lg + 2,
+    borderRadius: BORDER_RADIUS.md,
+    borderWidth: 1.5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 52,
+  },
+  clearButtonText: {
+    fontSize: 15,
     fontWeight: '600',
-    color: '#222222',
+    letterSpacing: 0.2,
+  },
+  applyButton: {
+    flex: 2,
+    paddingVertical: SPACING.lg + 2,
+    borderRadius: BORDER_RADIUS.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 52,
+  },
+  applyButtonText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: 'white',
+    letterSpacing: 0.2,
   },
 });

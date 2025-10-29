@@ -32,13 +32,9 @@ export function TaskList() {
     </ThemedView>
   );
 
-  if (error) {
-    return renderError();
-  }
-
   return (
     <FlatList
-      data={tasks}
+      data={error ? [] : tasks}
       renderItem={renderTask}
       keyExtractor={(item) =>
         `${item.id}-${filters.status}-${filters.priority}`
@@ -48,7 +44,7 @@ export function TaskList() {
       refreshControl={
         <RefreshControl refreshing={isLoading} onRefresh={() => refetch()} />
       }
-      ListEmptyComponent={renderEmpty}
+      ListEmptyComponent={error ? renderError : renderEmpty}
     />
   );
 }
