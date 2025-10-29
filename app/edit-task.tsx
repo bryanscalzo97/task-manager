@@ -105,19 +105,6 @@ export default function EditTaskScreen() {
           <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
             <Ionicons name='close' size={24} color={iconColor} />
           </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.saveButton,
-              editTask.isPending && styles.saveButtonDisabled,
-              { backgroundColor: tintColor },
-            ]}
-            onPress={handleEditTask}
-            disabled={editTask.isPending}
-          >
-            <ThemedText style={styles.saveButtonText}>
-              {editTask.isPending ? 'Saving...' : 'Save'}
-            </ThemedText>
-          </TouchableOpacity>
         </ThemedView>
         <ThemedView style={styles.inputSection}>
           <ThemedText style={[styles.label, { color: textColor }]}>
@@ -208,6 +195,22 @@ export default function EditTaskScreen() {
               ))}
             </ThemedView>
           )}
+        </ThemedView>
+
+        <ThemedView style={[styles.footer, { backgroundColor }]}>
+          <TouchableOpacity
+            style={[
+              styles.saveButton,
+              editTask.isPending && styles.saveButtonDisabled,
+            ]}
+            onPress={handleEditTask}
+            disabled={editTask.isPending}
+            activeOpacity={0.8}
+          >
+            <ThemedText style={styles.saveButtonText}>
+              {editTask.isPending ? 'Saving...' : 'Save Changes'}
+            </ThemedText>
+          </TouchableOpacity>
         </ThemedView>
       </ThemedView>
     </SafeAreaView>

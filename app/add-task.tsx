@@ -71,19 +71,6 @@ export default function AddTaskScreen() {
           <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
             <Ionicons name='close' size={24} color={iconColor} />
           </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.addButton,
-              addTask.isPending && styles.addButtonDisabled,
-              { backgroundColor: tintColor },
-            ]}
-            onPress={handleAddTask}
-            disabled={addTask.isPending}
-          >
-            <ThemedText style={styles.addButtonText}>
-              {addTask.isPending ? 'Adding...' : 'Add'}
-            </ThemedText>
-          </TouchableOpacity>
         </ThemedView>
         <ThemedView style={styles.inputSection}>
           <ThemedText style={[styles.label, { color: textColor }]}>
@@ -174,6 +161,22 @@ export default function AddTaskScreen() {
               ))}
             </ThemedView>
           )}
+        </ThemedView>
+
+        <ThemedView style={[styles.footer, { backgroundColor }]}>
+          <TouchableOpacity
+            style={[
+              styles.addButton,
+              addTask.isPending && styles.addButtonDisabled,
+            ]}
+            onPress={handleAddTask}
+            disabled={addTask.isPending}
+            activeOpacity={0.8}
+          >
+            <ThemedText style={styles.addButtonText}>
+              {addTask.isPending ? 'Adding...' : 'Add Task'}
+            </ThemedText>
+          </TouchableOpacity>
         </ThemedView>
       </ThemedView>
     </SafeAreaView>
