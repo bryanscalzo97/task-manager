@@ -47,6 +47,8 @@ export default function AddTaskScreen() {
       { text, priority },
       {
         onSuccess: () => {
+          setText('');
+          setPriority(TaskPriority.Medium);
           router.back();
         },
         onError: (error) => {
