@@ -8,6 +8,7 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 
+import { FilterProvider } from '@/contexts/FilterContext';
 import { ThemeProvider, useTheme } from '@/contexts/ThemeContext';
 
 const queryClient = new QueryClient({
@@ -52,7 +53,9 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
-        <RootLayoutNav />
+        <FilterProvider>
+          <RootLayoutNav />
+        </FilterProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );

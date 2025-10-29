@@ -1,19 +1,55 @@
-import { Task, TaskPriority } from '@/types/task';
+import { Task, TaskPriority, TaskStatus } from '@/types/task';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 const API_BASE = 'http://localhost:3000';
 
-// Query for fetching tasks
-export function useTasks() {
+// Query for fetching tasks (supports server-side filtering via query params)
+type TaskFilters = {
+  status?: TaskStatus; // 'All' | 'Completed' | 'Pending'
+  priority?: TaskPriority | 'All';
+  search?: string;
+};
+
+export function useTasks(filters?: TaskFilters) {
+  // Create a stable query key based on filter values
+  const queryKey = [
+    'tasks',
+    filters?.status || 'All',
+    filters?.priority || 'All',
+    filters?.search || '',
+  ];
+
   return useQuery({
-    queryKey: ['tasks'],
+    queryKey,
     queryFn: async (): Promise<Task[]> => {
-      const response = await fetch(`${API_BASE}/tasks`);
+      const params = new URLSearchParams();
+
+      if (filters?.status && filters.status !== 'All') {
+        const completed = filters.status === 'Completed' ? 'true' : 'false';
+        params.append('completed', completed);
+      }
+
+      if (filters?.priority && filters.priority !== 'All') {
+        params.append('priority', String(filters.priority));
+      }
+
+      if (filters?.search && filters.search.trim()) {
+        params.append('q', filters.search.trim());
+      }
+
+      // Default sort - newest first
+      params.append('_sort', 'createdAt');
+      params.append('_order', 'desc');
+
+      const url = `${API_BASE}/tasks${
+        params.toString() ? `?${params.toString()}` : ''
+      }`;
+
+      const response = await fetch(url);
       if (!response.ok) {
         throw new Error('Failed to fetch tasks');
       }
       const tasks = await response.json();
-      // Convert date strings back to Date objects
       return tasks.map((task: any) => ({
         ...task,
         createdAt: new Date(task.createdAt),

@@ -1,63 +1,35 @@
-import { FilterState, TaskPriority, TaskStatus } from '@/types/task';
-import { useCallback, useMemo, useState } from 'react';
+import { useFilterContext } from '@/contexts/FilterContext';
+import { useMemo } from 'react';
 import { useTasks } from './useTasks';
 
 export function useTaskFilters() {
-  // Fetch tasks from the API
-  const { data: tasks = [] } = useTasks();
+  // Get filters from shared context
+  const { filters, setStatusFilter, setPriorityFilter, resetFilters } =
+    useFilterContext();
 
-  // State for filters
-  const [filters, setFilters] = useState<FilterState>({
-    status: 'All',
-    priority: 'All',
-  });
+  // Fetch filtered tasks from the API using server-side filters
+  const {
+    data: tasks = [],
+    isLoading,
+    error,
+    refetch,
+  } = useTasks({ status: filters.status, priority: filters.priority });
 
-  // Actions for setting filters
-  const setStatusFilter = useCallback((status: TaskStatus) => {
-    setFilters((prev) => ({ ...prev, status }));
-  }, []);
-  const setPriorityFilter = useCallback((priority: TaskPriority | 'All') => {
-    setFilters((prev) => ({ ...prev, priority }));
-  }, []);
-  const resetFilters = useCallback(() => {
-    setFilters({ status: 'All', priority: 'All' });
-  }, []);
+  // Fetch all tasks (unfiltered) for statistics
+  const { data: allTasks = [] } = useTasks();
 
-  // Computed values for filtered tasks and tasks stats
-  const getFilteredTasks = useCallback(
-    (tasks: any[]) => {
-      return tasks.filter((task) => {
-        const statusMatch =
-          filters.status === 'All' ||
-          (filters.status === 'Completed' && task.completed) ||
-          (filters.status === 'Pending' && !task.completed);
-
-        const priorityMatch =
-          filters.priority === 'All' || task.priority === filters.priority;
-
-        return statusMatch && priorityMatch;
-      });
-    },
-    [filters]
-  );
-  const getTaskStats = useCallback((tasks: any[]) => {
-    const total = tasks.length;
-    const completed = tasks.filter((task) => task.completed).length;
+  // Computed values for tasks stats (based on all tasks, not filtered)
+  const taskStats = useMemo(() => {
+    const total = allTasks.length;
+    const completed = allTasks.filter((task) => task.completed).length;
     const pending = total - completed;
     return { total, completed, pending };
-  }, []);
-
-  // Memoized computed values
-  const filteredTasks = useMemo(() => {
-    const filtered = getFilteredTasks(tasks);
-    return filtered;
-  }, [tasks, getFilteredTasks]);
-  const taskStats = useMemo(() => getTaskStats(tasks), [tasks, getTaskStats]);
+  }, [allTasks]);
 
   return {
     // State
-    tasks: filteredTasks,
-    allTasks: tasks,
+    tasks,
+    allTasks,
     filters,
     taskStats,
 
@@ -65,5 +37,10 @@ export function useTaskFilters() {
     setStatusFilter,
     setPriorityFilter,
     resetFilters,
+
+    // Query state
+    isLoading,
+    error,
+    refetch,
   };
 }

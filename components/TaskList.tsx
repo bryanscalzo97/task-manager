@@ -1,5 +1,4 @@
 import { useTaskFilters } from '@/hooks/useTaskFilters';
-import { useTasks } from '@/hooks/useTasks';
 import { Task } from '@/types/task';
 import React from 'react';
 import { FlatList, RefreshControl, StyleSheet } from 'react-native';
@@ -8,8 +7,7 @@ import { ThemedText } from './themed-text';
 import { ThemedView } from './themed-view';
 
 export function TaskList() {
-  const { isLoading, error, refetch } = useTasks();
-  const { tasks, filters } = useTaskFilters();
+  const { tasks, filters, isLoading, error, refetch } = useTaskFilters();
 
   const renderTask = ({ item }: { item: Task }) => <TaskItem task={item} />;
 
