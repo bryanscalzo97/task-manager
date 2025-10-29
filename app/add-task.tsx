@@ -1,27 +1,33 @@
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { useThemeColor } from '@/hooks/use-theme-color';
-import { useAddTask } from '@/hooks/useTasks';
-import { TaskPriority } from '@/types/task';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import { Alert, TextInput, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useAddTask } from 'src/api/mutations/tasks';
+import { ThemedText } from 'src/components/ThemedText';
+import { ThemedView } from 'src/components/ThemedView';
+import { TaskPriority } from 'src/models/task';
+import { TASK_PRIORITY_COLORS } from 'src/utils/theme';
+import { useThemeColor } from 'src/utils/use-theme-color';
+import { styles } from './add-task.styles';
 
 const PRIORITY_OPTIONS: {
   label: string;
   value: TaskPriority;
   color: string;
 }[] = [
-  { label: 'High', value: 'High', color: '#ff4444' },
-  { label: 'Medium', value: 'Medium', color: '#ffaa00' },
-  { label: 'Low', value: 'Low', color: '#44ff44' },
+  { label: 'High', value: TaskPriority.High, color: TASK_PRIORITY_COLORS.High },
+  {
+    label: 'Medium',
+    value: TaskPriority.Medium,
+    color: TASK_PRIORITY_COLORS.Medium,
+  },
+  { label: 'Low', value: TaskPriority.Low, color: TASK_PRIORITY_COLORS.Low },
 ];
 
 export default function AddTaskScreen() {
   const [text, setText] = useState('');
-  const [priority, setPriority] = useState<TaskPriority>('Medium');
+  const [priority, setPriority] = useState<TaskPriority>(TaskPriority.Medium);
   const [showPriorityPicker, setShowPriorityPicker] = useState(false);
 
   const textColor = useThemeColor({}, 'text');
@@ -58,29 +64,25 @@ export default function AddTaskScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor }]}>
-      <ThemedView style={styles.header}>
-        <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
-          <Ionicons name='close' size={24} color={iconColor} />
-        </TouchableOpacity>
-        <ThemedText style={[styles.title, { color: textColor }]}>
-          Add New Task
-        </ThemedText>
-        <TouchableOpacity
-          style={[
-            styles.addButton,
-            addTask.isPending && styles.addButtonDisabled,
-            { backgroundColor: tintColor },
-          ]}
-          onPress={handleAddTask}
-          disabled={addTask.isPending}
-        >
-          <ThemedText style={styles.addButtonText}>
-            {addTask.isPending ? 'Adding...' : 'Add'}
-          </ThemedText>
-        </TouchableOpacity>
-      </ThemedView>
-
       <ThemedView style={styles.content}>
+        <ThemedView style={styles.headerActions}>
+          <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
+            <Ionicons name='close' size={24} color={iconColor} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.addButton,
+              addTask.isPending && styles.addButtonDisabled,
+              { backgroundColor: tintColor },
+            ]}
+            onPress={handleAddTask}
+            disabled={addTask.isPending}
+          >
+            <ThemedText style={styles.addButtonText}>
+              {addTask.isPending ? 'Adding...' : 'Add'}
+            </ThemedText>
+          </TouchableOpacity>
+        </ThemedView>
         <ThemedView style={styles.inputSection}>
           <ThemedText style={[styles.label, { color: textColor }]}>
             Task Description
@@ -175,122 +177,3 @@ export default function AddTaskScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E5E5',
-  },
-  closeButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#222222',
-  },
-  addButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 8,
-    backgroundColor: '#007AFF',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  addButtonDisabled: {
-    backgroundColor: '#CCCCCC',
-  },
-  addButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: 'white',
-  },
-  content: {
-    flex: 1,
-    padding: 20,
-  },
-  inputSection: {
-    marginBottom: 24,
-  },
-  prioritySection: {
-    marginBottom: 8,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 8,
-    color: '#222222',
-  },
-  textInput: {
-    borderWidth: 2,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    fontSize: 16,
-    minHeight: 120,
-    maxHeight: 200,
-    backgroundColor: '#FFFFFF',
-    borderColor: '#DDDDDD',
-    textAlignVertical: 'top',
-  },
-  priorityButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderWidth: 2,
-    borderRadius: 12,
-    backgroundColor: '#FFFFFF',
-    borderColor: '#DDDDDD',
-  },
-  priorityIndicator: {
-    width: 16,
-    height: 16,
-    borderRadius: 8,
-    marginRight: 12,
-  },
-  priorityText: {
-    fontSize: 16,
-    fontWeight: '500',
-    flex: 1,
-    color: '#222222',
-  },
-  priorityPicker: {
-    marginTop: 12,
-    borderWidth: 2,
-    borderRadius: 12,
-    backgroundColor: '#FFFFFF',
-    borderColor: '#DDDDDD',
-  },
-  priorityOption: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-  },
-  priorityDot: {
-    width: 16,
-    height: 16,
-    borderRadius: 8,
-    marginRight: 12,
-  },
-  priorityOptionText: {
-    fontSize: 16,
-    fontWeight: '500',
-    flex: 1,
-    color: '#222222',
-  },
-});

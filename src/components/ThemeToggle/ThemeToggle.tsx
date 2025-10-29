@@ -1,8 +1,9 @@
-import { useTheme } from '@/contexts/ThemeContext';
-import { useThemeColor } from '@/hooks/use-theme-color';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import { TouchableOpacity } from 'react-native';
+import { useTheme } from '../../contexts/ThemeContext';
+import { useThemeColor } from '../../utils/use-theme-color';
+import { styles } from './ThemeToggle.styles';
 
 type ThemeToggleProps = {
   size?: number;
@@ -41,12 +42,3 @@ export function ThemeToggle({ size = 24 }: ThemeToggleProps) {
     </TouchableOpacity>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    padding: 8,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

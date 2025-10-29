@@ -8,13 +8,13 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 
-import { FilterProvider } from '@/contexts/FilterContext';
-import { ThemeProvider, useTheme } from '@/contexts/ThemeContext';
+import { FilterProvider } from 'src/contexts/FilterContext';
+import { ThemeProvider, useTheme } from 'src/contexts/ThemeContext';
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 5, // 5 minutes
+      staleTime: 1000 * 60 * 5,
       retry: 3,
     },
   },

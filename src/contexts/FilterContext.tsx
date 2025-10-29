@@ -1,10 +1,15 @@
-import { FilterState, SortOrder, TaskPriority, TaskStatus } from '@/types/task';
 import React, { createContext, useContext, useState } from 'react';
+import {
+  FilterState,
+  SortOrder,
+  TaskPriority,
+  TaskStatus,
+} from '../models/task';
 
 type FilterContextType = {
   filters: FilterState;
   setStatusFilter: (status: TaskStatus) => void;
-  setPriorityFilter: (priority: TaskPriority | 'All') => void;
+  setPriorityFilter: (priority: TaskPriority | TaskStatus.All) => void;
   setSortOrder: (order: SortOrder) => void;
   resetFilters: () => void;
 };
@@ -13,16 +18,16 @@ const FilterContext = createContext<FilterContextType | undefined>(undefined);
 
 export function FilterProvider({ children }: { children: React.ReactNode }) {
   const [filters, setFilters] = useState<FilterState>({
-    status: 'All',
-    priority: 'All',
-    sortOrder: 'desc',
+    status: TaskStatus.All,
+    priority: TaskStatus.All,
+    sortOrder: SortOrder.Desc,
   });
 
   const setStatusFilter = (status: TaskStatus) => {
     setFilters((prev) => ({ ...prev, status }));
   };
 
-  const setPriorityFilter = (priority: TaskPriority | 'All') => {
+  const setPriorityFilter = (priority: TaskPriority | TaskStatus.All) => {
     setFilters((prev) => ({ ...prev, priority }));
   };
 
@@ -31,7 +36,11 @@ export function FilterProvider({ children }: { children: React.ReactNode }) {
   };
 
   const resetFilters = () => {
-    setFilters({ status: 'All', priority: 'All', sortOrder: 'desc' });
+    setFilters({
+      status: TaskStatus.All,
+      priority: TaskStatus.All,
+      sortOrder: SortOrder.Desc,
+    });
   };
 
   return (

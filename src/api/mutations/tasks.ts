@@ -1,73 +1,8 @@
-import { Task, TaskPriority, TaskStatus } from '@/types/task';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Task, TaskPriority } from '../../models/task';
 
 const API_BASE = 'http://localhost:3000';
 
-// Query for fetching tasks (supports server-side filtering via query params)
-type TaskFilters = {
-  status?: TaskStatus; // 'All' | 'Completed' | 'Pending'
-  priority?: TaskPriority | 'All';
-  search?: string;
-  sortOrder?: 'asc' | 'desc';
-};
-
-export function useTasks(filters?: TaskFilters) {
-  // Create a stable query key based on filter values
-  const sortOrder = filters?.sortOrder || 'desc';
-  const queryKey = [
-    'tasks',
-    filters?.status || 'All',
-    filters?.priority || 'All',
-    filters?.search || '',
-    sortOrder,
-  ];
-
-  return useQuery({
-    queryKey,
-    queryFn: async (): Promise<Task[]> => {
-      const params = new URLSearchParams();
-
-      if (filters?.status && filters.status !== 'All') {
-        const completed = filters.status === 'Completed' ? 'true' : 'false';
-        params.append('completed', completed);
-      }
-
-      if (filters?.priority && filters.priority !== 'All') {
-        params.append('priority', String(filters.priority));
-      }
-
-      if (filters?.search && filters.search.trim()) {
-        params.append('q', filters.search.trim());
-      }
-
-      const url = `${API_BASE}/tasks${
-        params.toString() ? `?${params.toString()}` : ''
-      }`;
-
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error('Failed to fetch tasks');
-      }
-      const tasks = await response.json();
-
-      const tasksWithDates = tasks.map((task: any) => ({
-        ...task,
-        createdAt: new Date(task.createdAt),
-        updatedAt: new Date(task.updatedAt),
-      }));
-
-      const sortedTasks = tasksWithDates.sort((a: Task, b: Task) => {
-        const dateA = a.createdAt.getTime();
-        const dateB = b.createdAt.getTime();
-        return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
-      });
-
-      return sortedTasks;
-    },
-  });
-}
-
-// Mutation for adding a task
 export function useAddTask() {
   const queryClient = useQueryClient();
 
@@ -103,18 +38,16 @@ export function useAddTask() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tasks'], exact: false });
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
     },
   });
 }
 
-// Mutation for toggling a task
 export function useToggleTask() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (id: string) => {
-      // First get the current task
       const getResponse = await fetch(`${API_BASE}/tasks/${id}`);
       if (!getResponse.ok) {
         throw new Error('Failed to fetch task');
@@ -147,7 +80,6 @@ export function useToggleTask() {
   });
 }
 
-// Mutation for deleting a task
 export function useDeleteTask() {
   const queryClient = useQueryClient();
 
@@ -169,7 +101,6 @@ export function useDeleteTask() {
   });
 }
 
-// Mutation for editing a task
 export function useEditTask() {
   const queryClient = useQueryClient();
 
@@ -183,7 +114,6 @@ export function useEditTask() {
       text: string;
       priority: TaskPriority;
     }) => {
-      // First get the current task
       const getResponse = await fetch(`${API_BASE}/tasks/${id}`);
       if (!getResponse.ok) {
         throw new Error('Failed to fetch task');

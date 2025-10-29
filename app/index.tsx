@@ -1,14 +1,15 @@
 import { router } from 'expo-router';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 
-import { FloatingActionButton } from '@/components/FloatingActionButton';
-import { TaskList } from '@/components/TaskList';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { ThemeToggle } from '@/components/ThemeToggle';
-import { useThemeColor } from '@/hooks/use-theme-color';
-import { useTaskFilters } from '@/hooks/useTaskFilters';
 import { Ionicons } from '@expo/vector-icons';
+import { FloatingActionButton } from 'src/components/FloatingActionButton';
+import { TaskList } from 'src/components/TaskList';
+import { ThemedText } from 'src/components/ThemedText';
+import { ThemedView } from 'src/components/ThemedView';
+import { ThemeToggle } from 'src/components/ThemeToggle';
+import { useTaskFilters } from 'src/hooks/useTaskFilters';
+import { useThemeColor } from 'src/utils/use-theme-color';
+import { styles } from './index.styles';
 
 export default function HomeScreen() {
   const iconColor = useThemeColor({}, 'icon');
@@ -52,46 +53,3 @@ export default function HomeScreen() {
     </ThemedView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingTop: 60,
-    paddingBottom: 20,
-  },
-  titleSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    flex: 1,
-  },
-  badge: {
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 12,
-    backgroundColor: '#007AFF',
-  },
-  badgeText: {
-    color: 'white',
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  headerActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 16,
-  },
-  filterButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

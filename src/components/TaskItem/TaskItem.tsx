@@ -1,42 +1,35 @@
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { useThemeColor } from '@/hooks/use-theme-color';
-import { useDeleteTask, useToggleTask } from '@/hooks/useTasks';
-import { Task, TaskPriority } from '@/types/task';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React from 'react';
-import { Alert, StyleSheet, TouchableOpacity } from 'react-native';
+import { Alert, TouchableOpacity } from 'react-native';
+import { useDeleteTask, useToggleTask } from '../../api/mutations/tasks';
+import { Task, TaskPriority } from '../../models/task';
+import { TASK_PRIORITY_COLORS } from '../../utils/theme';
+import { useThemeColor } from '../../utils/use-theme-color';
+import { ThemedText } from '../ThemedText';
+import { ThemedView } from '../ThemedView';
+import { styles } from './TaskItem.styles';
 
 type TaskItemProps = {
   task: Task;
 };
 
-const getPriorityColor = (priority: TaskPriority) => {
-  switch (priority) {
-    case 'High':
-      return '#ff4444';
-    case 'Medium':
-      return '#ffaa00';
-    case 'Low':
-      return '#44ff44';
-    default:
-      return '#888888';
-  }
-};
+function getPriorityColor(priority: TaskPriority): string {
+  return TASK_PRIORITY_COLORS[priority] || '#888888';
+}
 
-const getPriorityText = (priority: TaskPriority) => {
+function getPriorityText(priority: TaskPriority): string {
   switch (priority) {
-    case 'High':
+    case TaskPriority.High:
       return 'High';
-    case 'Medium':
+    case TaskPriority.Medium:
       return 'Med';
-    case 'Low':
+    case TaskPriority.Low:
       return 'Low';
     default:
       return 'N/A';
   }
-};
+}
 
 export function TaskItem({ task }: TaskItemProps) {
   const textColor = useThemeColor({}, 'text');
@@ -114,69 +107,3 @@ export function TaskItem({ task }: TaskItemProps) {
     </ThemedView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    marginHorizontal: 16,
-    marginVertical: 4,
-    borderRadius: 12,
-    backgroundColor: 'rgba(0,0,0,0.05)',
-  },
-  content: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 16,
-  },
-  leftSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  checkbox: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: '#ddd',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12,
-  },
-  textSection: {
-    flex: 1,
-  },
-  taskText: {
-    fontSize: 16,
-    fontWeight: '500',
-    marginBottom: 4,
-  },
-  completedText: {
-    textDecorationLine: 'line-through',
-    opacity: 0.6,
-  },
-  dateText: {
-    fontSize: 12,
-    opacity: 0.7,
-  },
-  rightSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  priorityBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-    marginRight: 8,
-  },
-  priorityText: {
-    color: 'white',
-    fontSize: 12,
-    fontWeight: 'bold',
-  },
-  actionButton: {
-    padding: 8,
-    borderRadius: 8,
-    marginLeft: 4,
-  },
-});

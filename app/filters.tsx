@@ -1,30 +1,39 @@
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { useThemeColor } from '@/hooks/use-theme-color';
-import { useTaskFilters } from '@/hooks/useTaskFilters';
-import { SortOrder, TaskPriority, TaskStatus } from '@/types/task';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React from 'react';
-import { ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import { ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { ThemedText } from 'src/components/ThemedText';
+import { ThemedView } from 'src/components/ThemedView';
+import { useTaskFilters } from 'src/hooks/useTaskFilters';
+import { SortOrder, TaskPriority, TaskStatus } from 'src/models/task';
+import { STATS_COLORS } from 'src/utils/theme';
+import { useThemeColor } from 'src/utils/use-theme-color';
+import { styles } from './filters.styles';
 
 const STATUS_OPTIONS: { label: string; value: TaskStatus }[] = [
-  { label: 'All Tasks', value: 'All' },
-  { label: 'Completed', value: 'Completed' },
-  { label: 'Pending', value: 'Pending' },
+  { label: 'All Tasks', value: TaskStatus.All },
+  { label: 'Completed', value: TaskStatus.Completed },
+  { label: 'Pending', value: TaskStatus.Pending },
 ];
 
-const PRIORITY_OPTIONS: { label: string; value: TaskPriority | 'All' }[] = [
-  { label: 'All Priorities', value: 'All' },
-  { label: 'High Priority', value: 'High' },
-  { label: 'Medium Priority', value: 'Medium' },
-  { label: 'Low Priority', value: 'Low' },
+const PRIORITY_OPTIONS: {
+  label: string;
+  value: TaskPriority | TaskStatus.All;
+}[] = [
+  { label: 'All Priorities', value: TaskStatus.All },
+  { label: 'High Priority', value: TaskPriority.High },
+  { label: 'Medium Priority', value: TaskPriority.Medium },
+  { label: 'Low Priority', value: TaskPriority.Low },
 ];
 
 const SORT_OPTIONS: { label: string; value: SortOrder; icon: string }[] = [
-  { label: 'Newest First', value: 'desc', icon: 'arrow-down-outline' },
-  { label: 'Oldest First', value: 'asc', icon: 'arrow-up-outline' },
+  {
+    label: 'Newest First',
+    value: SortOrder.Desc,
+    icon: 'arrow-down-outline',
+  },
+  { label: 'Oldest First', value: SortOrder.Asc, icon: 'arrow-up-outline' },
 ];
 
 export default function FiltersScreen() {
@@ -52,13 +61,10 @@ export default function FiltersScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor }]}>
-      <ThemedView style={styles.header}>
+      <ThemedView style={styles.headerActions}>
         <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
           <Ionicons name='close' size={24} color={iconColor} />
         </TouchableOpacity>
-        <ThemedText style={[styles.title, { color: textColor }]}>
-          Filter Tasks
-        </ThemedText>
         <TouchableOpacity
           style={[styles.applyButton, { backgroundColor: tintColor }]}
           onPress={handleClose}
@@ -72,7 +78,6 @@ export default function FiltersScreen() {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        {/* Task Statistics */}
         <ThemedView style={styles.statsSection}>
           <ThemedText style={[styles.sectionTitle, { color: textColor }]}>
             Task Overview
@@ -87,7 +92,9 @@ export default function FiltersScreen() {
               </ThemedText>
             </ThemedView>
             <ThemedView style={styles.statItem}>
-              <ThemedText style={[styles.statNumber, { color: '#34C759' }]}>
+              <ThemedText
+                style={[styles.statNumber, { color: STATS_COLORS.completed }]}
+              >
                 {taskStats.completed}
               </ThemedText>
               <ThemedText style={[styles.statLabel, { color: iconColor }]}>
@@ -95,7 +102,9 @@ export default function FiltersScreen() {
               </ThemedText>
             </ThemedView>
             <ThemedView style={styles.statItem}>
-              <ThemedText style={[styles.statNumber, { color: '#FF9500' }]}>
+              <ThemedText
+                style={[styles.statNumber, { color: STATS_COLORS.pending }]}
+              >
                 {taskStats.pending}
               </ThemedText>
               <ThemedText style={[styles.statLabel, { color: iconColor }]}>
@@ -105,7 +114,6 @@ export default function FiltersScreen() {
           </ThemedView>
         </ThemedView>
 
-        {/* Status Filter */}
         <ThemedView style={styles.filterSection}>
           <ThemedText style={[styles.sectionTitle, { color: textColor }]}>
             Status
@@ -137,7 +145,6 @@ export default function FiltersScreen() {
           </ThemedView>
         </ThemedView>
 
-        {/* Priority Filter */}
         <ThemedView style={styles.filterSection}>
           <ThemedText style={[styles.sectionTitle, { color: textColor }]}>
             Priority
@@ -169,7 +176,6 @@ export default function FiltersScreen() {
           </ThemedView>
         </ThemedView>
 
-        {/* Sort Order */}
         <ThemedView style={styles.filterSection}>
           <ThemedText style={[styles.sectionTitle, { color: textColor }]}>
             Sort By Date
@@ -224,129 +230,3 @@ export default function FiltersScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E5E5',
-  },
-  closeButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#222222',
-  },
-  applyButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 8,
-    backgroundColor: '#007AFF',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  applyButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: 'white',
-  },
-  scrollView: {
-    flex: 1,
-  },
-  content: {
-    padding: 20,
-    paddingBottom: 20,
-  },
-  statsSection: {
-    marginBottom: 32,
-  },
-  filterSection: {
-    marginBottom: 24,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 16,
-    color: '#222222',
-  },
-  statsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-  },
-  statItem: {
-    alignItems: 'center',
-  },
-  statNumber: {
-    fontSize: 24,
-    fontWeight: '700',
-    marginBottom: 4,
-  },
-  statLabel: {
-    fontSize: 12,
-    fontWeight: '500',
-    color: '#8E8E93',
-  },
-  optionsContainer: {
-    gap: 8,
-  },
-  optionButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    borderRadius: 12,
-    backgroundColor: '#F2F2F7',
-  },
-  selectedOption: {
-    backgroundColor: '#E3F2FD',
-    borderWidth: 1,
-    borderColor: '#2196F3',
-  },
-  optionText: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#222222',
-  },
-  selectedText: {
-    color: '#1976D2',
-    fontWeight: '600',
-  },
-  sortOptionContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    flex: 1,
-  },
-  footer: {
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-  },
-  resetButton: {
-    paddingVertical: 14,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: '#DDDDDD',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  resetButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#222222',
-  },
-});

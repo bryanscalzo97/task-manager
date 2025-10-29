@@ -1,10 +1,11 @@
-import { useTaskFilters } from '@/hooks/useTaskFilters';
-import { Task } from '@/types/task';
 import React from 'react';
-import { FlatList, RefreshControl, StyleSheet } from 'react-native';
-import { TaskItem } from './TaskItem';
-import { ThemedText } from './themed-text';
-import { ThemedView } from './themed-view';
+import { FlatList, RefreshControl } from 'react-native';
+import { useTaskFilters } from '../../hooks/useTaskFilters';
+import { Task } from '../../models/task';
+import { TaskItem } from '../TaskItem';
+import { ThemedText } from '../ThemedText';
+import { ThemedView } from '../ThemedView';
+import { styles } from './TaskList.styles';
 
 export function TaskList() {
   const { tasks, filters, isLoading, error, refetch } = useTaskFilters();
@@ -51,45 +52,3 @@ export function TaskList() {
     />
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    paddingVertical: 8,
-  },
-  emptyContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 60,
-  },
-  emptyText: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-  emptySubtext: {
-    fontSize: 14,
-    opacity: 0.7,
-    textAlign: 'center',
-  },
-  errorContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 60,
-  },
-  errorText: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 8,
-    textAlign: 'center',
-    color: '#ff4444',
-  },
-  errorSubtext: {
-    fontSize: 14,
-    opacity: 0.7,
-    textAlign: 'center',
-  },
-});
