@@ -1,50 +1,86 @@
-# Welcome to your Expo app 👋
+### Task Manager — React Native (Expo)
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+#### Setup
 
-## Get started
+- Install dependencies:
+  ```bash
+  npm install
+  # or
+  yarn
+  ```
+- Start mock API (json-server):
+  ```bash
+  yarn server
+  ```
+- Run the app:
+  ```bash
+  yarn start
+  ```
+  - iOS: press `i` (Simulator)
+  - Android: press `a` (Emulator)
+  - Or scan the QR with Expo Go
 
-1. Install dependencies
+#### Tech Stack
 
-   ```bash
-   npm install
-   ```
+- Expo + Expo Router (file-based routing in `app/`)
+- React Query (cache, fetching, mutations with optimistic updates)
+- AsyncStorage (local persistence)
+- Context API (theme and filters)
+- json-server (mock REST API using `data/db.json`)
+- React Native Gesture Handler + Reanimated (swipe-to-reveal on task items)
 
-2. Start the app
+#### Global State Choice
 
-   ```bash
-   npx expo start
-   ```
+Chose Context API over Zustand because Expo already exposes theming through a `Context`, and this keeps patterns consistent with the Expo stack. Given the scoped requirements, Context is sufficient without adding another dependency.
 
-In the output, you'll find options to open the app in a
+#### Relevant Structure
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- Screens: `app/index.tsx`, `app/add-task.tsx`, `app/edit-task.tsx`, `app/filters.tsx`
+- Screen styles: `app/*.styles.ts`
+- List & items:
+  - `src/components/TaskList/TaskList.tsx`
+  - `src/components/TaskItem/TaskItem.tsx`, `src/components/TaskItem/TaskItem.styles.ts`
+- Theming: `src/contexts/ThemeContext.tsx`, `src/utils/use-theme-color.ts`, `constants/theme.ts`
+- Filters: `src/contexts/FilterContext.tsx`, `src/hooks/useTaskFilters.ts`
+- Data:
+  - Queries: `src/api/queries/tasks.ts`
+  - Mutations: `src/api/mutations/tasks.ts`
+  - Persistence: `src/utils/storage.ts`
+  - Mock DB: `data/db.json`
+- Root/providers/gesture: `app/_layout.tsx`
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+#### Features per Requirement
 
-## Get a fresh project
+- Add Tasks
+  - Text input with validation (non-empty), “Add Task” button, clears after adding
+  - Files: `app/add-task.tsx`, `app/add-task.styles.ts`
+- Task List
+  - `FlatList` rendering `TaskItem` with: text, checkbox (toggle complete), delete, priority badge (High/Med/Low), completed styling
+  - Swipe left to reveal Edit/Delete (Reanimated + Gesture Handler)
+  - Files: `src/components/TaskList/TaskList.tsx`, `src/components/TaskItem/*`
+- Filtering System
+  - Combined filters: Status (All/Completed/Pending), Priority (All/High/Med/Low), Sort (Newest/Oldest)
+  - Modern chip-based UI with horizontal scroll
+  - Files: `app/filters.tsx`, `app/filters.styles.ts`, `src/contexts/FilterContext.tsx`
+- Data Persistence
+  - `AsyncStorage` helpers: `saveTasks` / `loadTasks` (`src/utils/storage.ts`)
+  - Cache bootstrap on startup via `useInitializeTasks` (`app/_layout.tsx`)
+  - Fallback to local data if network fails (`useTasks`)
+- Global State Management
+  - `ThemeContext` and `FilterContext` with hooks
+  - React Query for server/cache with optimistic updates on add/toggle/edit/delete
+- Bonus
+  - Pull-to-refresh with theme-aware spinner (`RefreshControl` uses theme `tintColor`)
+  - Counters on Home (total/completed/pending)
+  - Dark mode support throughout
+  - Fixed bottom actions in modals: “Show tasks”, “Save Changes”, “Add Task”
 
-When you're ready, run:
+#### How It Works
 
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- On app start, tasks are loaded from `AsyncStorage` (if present) into the React Query cache.
+- `useTasks` fetches from `json-server` first; if it fails, it loads from local storage and applies filters/sorting in memory.
+- Mutations perform optimistic updates, rollback on error, and sync the final state to `AsyncStorage` on success.
+- UI overview:
+  - Home: title, filter button, theme toggle, stats, list with swipe actions
+  - Filters: horizontal chips for status/priority, sort options, fixed footer “Show tasks”
+  - Add/Edit: inputs with priority selector, fixed footer action buttons

@@ -1,20 +1,3 @@
 {
-  "tasks": [
-    {
-      "id": "1761778075417",
-      "text": "Nuevo task",
-      "completed": false,
-      "priority": "Medium",
-      "createdAt": "2025-10-29T22:47:55.417Z",
-      "updatedAt": "2025-10-29T22:47:55.417Z"
-    },
-    {
-      "id": "1761778133936",
-      "text": "Hola",
-      "completed": false,
-      "priority": "Medium",
-      "createdAt": "2025-10-29T22:48:53.936Z",
-      "updatedAt": "2025-10-29T22:48:53.936Z"
-    }
-  ]
+  "tasks": []
 }
