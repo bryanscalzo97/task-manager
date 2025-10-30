@@ -1,5 +1,12 @@
 ### Task Manager — React Native (Expo)
 
+#### Demo
+
+
+https://github.com/user-attachments/assets/0bd5eb8a-da28-4278-905d-9cdec48f3fa2
+
+
+
 #### Setup
 
 - Install dependencies:
